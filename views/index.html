@@ -22,9 +22,10 @@
       <h3>User Story:</h3>
       <ol>
         <li>
-          I can POST a URL to <code>[project_url]/api/shorturl/new</code> and I
-          will receive a shortened URL in the JSON response.<br />Example :
-          <code>{"original_url":"www.google.com","short_url":1}</code>
+          I can POST a URL to
+          <code>https://url-shortener-fcc.herokuapp.com/api/shorturl/new</code>
+          and I will receive a shortened URL in the JSON response.<br />Example
+          : <code>{"original_url":"www.google.com","short_url":1}</code>
         </li>
         <li>
           If I pass an invalid URL that doesn't follow the
@@ -43,8 +44,11 @@
 
       <h3>Short URL Creation</h3>
       <p>
-        example: <code>POST [project_url]/api/shorturl/new</code> -
-        <code>https://www.google.com</code>
+        example:
+        <code
+          >POST https://url-shortener-fcc.herokuapp.com/api/shorturl/new</code
+        >
+        - <code>https://www.google.com</code>
       </p>
       <form action="api/shorturl/new" method="POST">
         <label for="url_input">URL to be shortened</label>
@@ -62,7 +66,7 @@
       </a>
 
       <h3>Will Redirect to:</h3>
-      <p>https://www.freecodecamp.com</p>
+      <p>https://www.freecodecamp.org</p>
     </div>
     <div class="footer">
       <p>by <a href="http://www.erichartline.net">Eric Hartline</a></p>
