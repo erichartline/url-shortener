@@ -34,11 +34,12 @@ app.post("/api/shorturl/new", (req, res) => {
       original_url: req.body.url,
       short_url: id
     })
+
     newUrl.save((err, newUrl) => {
       if (err) {
         return console.error(err)
       } else {
-        return console.log("successfully saved URL with short id: ", id)
+        return console.log("successfully saved URL with short id:", id)
       }
     })
 
@@ -48,12 +49,16 @@ app.post("/api/shorturl/new", (req, res) => {
   }
 })
 
-app.route("/:id", (req, res) => {
-  // look up db entry by id
-  // grab the orig url
-  // call res.redirect to orig url
+app.get("/api/shorturl/:id", (req, res) => {
+  urlModel.findOne({ short_url: req.params.id }, (err, data) => {
+    if (data != null) {
+      res.redirect(data.original_url)
+    } else {
+      res.json({ error: "Could not retrieve URL with given ID" })
+    }
+  })
 })
 
-app.listen(port, function() {
+app.listen(port, () => {
   console.log("Node.js listening ...")
 })
