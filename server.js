@@ -1,37 +1,59 @@
-'use strict';
+"use strict"
+require("dotenv").config()
+const express = require("express")
+const mongo = require("mongodb")
+const mongoose = require("mongoose")
+const cors = require("cors")
+const bodyParser = require("body-parser")
+const validUrl = require("valid-url")
+const shortid = require("shortid")
 
-var express = require('express');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const app = express()
+const port = process.env.PORT || 3000
 
-var cors = require('cors');
+mongoose.connect(process.env.MONGOLAB_URI)
+app.use(cors())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use("/public", express.static(process.cwd() + "/public"))
 
-var app = express();
+const urlSchema = new mongoose.Schema({
+  original_url: String,
+  short_url: String
+})
+const urlModel = mongoose.model("Url", urlSchema)
 
-// Basic Configuration 
-var port = process.env.PORT || 3000;
+app.get("/", function(req, res) {
+  res.sendFile(process.cwd() + "/views/index.html")
+})
 
-/** this project needs a db !! **/ 
-// mongoose.connect(process.env.MONGOLAB_URI);
+app.post("/api/shorturl/new", (req, res) => {
+  if (validUrl.isUri(req.body.url)) {
+    const id = shortid.generate()
+    const newUrl = new urlModel({
+      original_url: req.body.url,
+      short_url: id
+    })
+    newUrl.save((err, newUrl) => {
+      if (err) {
+        return console.error(err)
+      } else {
+        return console.log("successfully saved URL with short id: ", id)
+      }
+    })
 
-app.use(cors());
+    res.json({ original_url: req.body.url, short_url: id })
+  } else {
+    res.json({ error: "Invalid URL" })
+  }
+})
 
-/** this project needs to parse POST bodies **/
-// you should mount the body-parser here
+app.route("/:id", (req, res) => {
+  // look up db entry by id
+  // grab the orig url
+  // call res.redirect to orig url
+})
 
-app.use('/public', express.static(process.cwd() + '/public'));
-
-app.get('/', function(req, res){
-  res.sendFile(process.cwd() + '/views/index.html');
-});
-
-  
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
-});
-
-
-app.listen(port, function () {
-  console.log('Node.js listening ...');
-});
+app.listen(port, function() {
+  console.log("Node.js listening ...")
+})
